@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penelitian Titik Rawan Banjir</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans for Material You look & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" id="icon-unfilled" disabled />
+
+    <style>
+        :root {
+            /* Material You Light Theme Colors (Green/Earth Tone based) */
+            --md-sys-color-background: #F8FAF0;
+            --md-sys-color-on-background: #1A1C16;
+            --md-sys-color-surface: #FDFDF6;
+            --md-sys-color-surface-variant: #E1E4D6;
+            --md-sys-color-on-surface-variant: #44483E;
+            --md-sys-color-primary: #4A6700;
+            --md-sys-color-primary-container: #C8F077;
+            --md-sys-color-on-primary-container: #151F00;
+            --md-sys-color-secondary-container: #DFE6C6;
+            --md-sys-color-on-secondary-container: #1C1D17;
+            
+            --bottom-nav-height: 80px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-background);
+            padding-bottom: var(--bottom-nav-height); /* Space for bottom nav */
+            scroll-behavior: smooth;
+        }
+
+        /* Material You Card */
+        .my-card {
+            background-color: var(--md-sys-color-surface);
+            border-radius: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* Material You Search Input */
+        .search-container {
+            background-color: var(--md-sys-color-surface-variant);
+            border-radius: 28px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-container:focus-within {
+            background-color: var(--md-sys-color-surface);
+            box-shadow: 0 0 0 2px var(--md-sys-color-primary);
+        }
+
+        .search-input {
+            background: transparent;
+            color: var(--md-sys-color-on-background);
+        }
+        
+        .search-input::placeholder {
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        /* Highlight Style for Search */
+        mark {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            border-radius: 4px;
+            padding: 0 2px;
+            font-weight: 600;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+        }
+
+        /* Bottom Nav Active State */
+        .nav-item.active .nav-icon {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        .nav-item.active .nav-text {
+            color: var(--md-sys-color-on-background);
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            transition: background-color 0.3s, color 0.3s;
+            font-variation-settings: 'FILL' 0;
+        }
+
+        /* Smooth tab transition */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Text Formatting inside content */
+        .content-text p { margin-bottom: 1rem; line-height: 1.7; }
+        .content-text h3 { font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--md-sys-color-primary); }
+        .content-text ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .content-text li { margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Search Bar -->
+    <header class="sticky top-0 z-50 px-4 pt-4 pb-2" style="background: linear-gradient(180deg, var(--md-sys-color-background) 80%, transparent 100%);">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-2xl font-bold mb-4 px-2 tracking-tight">Penelitian Hidrosfer</h1>
+            
+            <div id="searchBox" class="search-container flex items-center px-4 py-3 w-full">
+                <span class="material-symbols-rounded text-[#44483E] mr-3">search</span>
+                <input type="text" id="searchInput" class="search-input flex-1 outline-none text-base font-medium" placeholder="Cari kata, kalimat, atau materi..." oninput="handleSearch()">
+                <button id="clearSearch" class="material-symbols-rounded text-[#44483E] hidden hover:text-black" onclick="clearSearchInput()">close</button>
+            </div>
+            <div id="searchResultCount" class="text-sm mt-2 px-4 text-[#44483E] font-medium hidden"></div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-3xl mx-auto px-4 pt-4 pb-8">
+        
+        <!-- TAB 1: MATERI PENELITIAN -->
+        <div id="tab-materi" class="tab-content active">
+            
+            <div id="content-body" class="content-text">
+                <!-- Data Original Disimpan di atribut data-original-html via JS nantinya untuk fitur search -->
+                <div class="my-card">
+                    <div class="inline-block px-3 py-1 bg-[#DFE6C6] text-[#1C1D17] text-xs font-bold rounded-full mb-3 uppercase tracking-wider">Abstrak</div>
+                    <h2 class="text-xl font-bold mb-2">Identifikasi Titik Rawan Banjir di Lingkungan Tempat Tinggal (Studi Kasus DKI Jakarta) — Perspektif Hidrosfer</h2>
+                    <p>Penelitian ini bertujuan untuk mengidentifikasi titik-titik rawan banjir di wilayah DKI Jakarta dengan menggunakan pendekatan analisis hidrosfer dan spasial. Dinamika siklus air (hidrologi), curah hujan ekstrem, perubahan tata guna lahan, serta penurunan muka tanah (land subsidence) menjadi fokus utama dalam mengkaji fenomena banjir. Melalui metode Analytical Hierarchy Process (AHP) dan Sistem Informasi Geografis (SIG), penelitian ini memetakan zona kerentanan tinggi dan merumuskan mitigasi struktural maupun non-struktural yang relevan.</p>
+                </div>
+
+                <div class="my-card">
+                    <h3>BAB I: Pendahuluan</h3>
+                    <p>Banjir merupakan salah satu bencana hidrometeorologis yang paling sering melanda kawasan perkotaan padat penduduk, khususnya DKI Jakarta. Secara geografis, Jakarta merupakan dataran rendah dan kawasan delta dari 13 sungai besar yang bermuara ke Teluk Jakarta. Sekitar 40% wilayah daratan Jakarta berada di bawah permukaan air laut, menjadikannya sangat rentan terhadap genangan air.</p>
+                    <p>Dari perspektif hidrosfer, banjir tidak hanya dipandang sebagai kelebihan volume air sesaat, melainkan ketidakseimbangan neraca air (water balance) pada suatu Daerah Aliran Sungai (DAS). Permasalahan utama yang dikaji meliputi intensitas presipitasi (curah hujan), tingkat infiltrasi (penyerapan air ke dalam tanah), dan run-off (limpasan permukaan).</p>
+                </div>
+
+                <div class="my-card">
+                    <h3>BAB II: Tinjauan Pustaka</h3>
+                    <p><strong>2.1 Dinamika Hidrosfer dan Siklus Hidrologi</strong><br>
+                    Hidrosfer meliputi seluruh lapisan air yang ada di bumi. Dalam konteks banjir, siklus hidrologi pendek dan menengah sangat berpengaruh. Tingginya proses kondensasi di atas wilayah Jabodetabek sering memicu presipitasi ekstrem.</p>
+                    <p><strong>2.2 Faktor Penyebab Banjir Perkotaan</strong><br>
+                    Terdapat beberapa faktor dominan pengubah karakteristik hidrosfer di perkotaan:</p>
+                    <ul>
+                        <li><strong>Berkurangnya Daerah Resapan Air:</strong> Betonisasi dan pengaspalan masif mengubah permukaan tanah menjadi kedap air, meningkatkan koefisien limpasan permukaan hingga 80-90%.</li>
+                        <li><strong>Penurunan Muka Tanah (Land Subsidence):</strong> Eksploitasi air tanah dalam (deep groundwater) secara masif menyebabkan pemadatan akuifer. Di beberapa titik di Jakarta Utara, laju penurunan mencapai 1-15 cm per tahun.</li>
+                        <li><strong>Kapasitas Drainase dan Sedimentasi:</strong> Pendangkalan sungai akibat sedimentasi dan tumpukan sampah domestik mengurangi penampang basah sungai, sehingga volume air cepat meluap.</li>
+                        <li><strong>Banjir Rob (Pasang Surut Air Laut):</strong> Kenaikan muka air laut global akibat perubahan iklim berpadu dengan penurunan muka tanah menciptakan backwater effect, di mana aliran sungai tertahan masuk ke laut.</li>
+                    </ul>
+                </div>
+
+                <div class="my-card">
+                    <h3>BAB III: Metodologi Penelitian</h3>
+                    <p>Penelitian ini menggunakan pendekatan kuantitatif spasial. Data hidrologi diperoleh dari Badan Meteorologi, Klimatologi, dan Geofisika (BMKG) untuk analisis curah hujan periode ulang 5, 10, dan 25 tahunan. Data debit air diperoleh dari stasiun pantau pintu air (misal: Bendung Katulampa, Pintu Air Manggarai).</p>
+                    <p>Sistem Informasi Geografis (SIG) digunakan untuk melakukan overlay (tumpang susun) peta parameter kerentanan, yang meliputi: (1) Kerapatan drainase, (2) Elevasi/Topografi (DEM), (3) Tutupan lahan, (4) Jenis tanah (kapasitas infiltrasi), dan (5) Jarak dari jaringan sungai utama.</p>
+                </div>
+
+                <div class="my-card">
+                    <h3>BAB IV: Hasil dan Pembahasan (Titik Rawan Jakarta)</h3>
+                    <p>Berdasarkan analisis hidrologis dan spasial, titik rawan banjir di Jakarta diklasifikasikan ke dalam tiga tipologi utama:</p>
+                    <ul>
+                        <li><strong>Tipologi Banjir Kiriman (Fluvial Flood):</strong> Terjadi akibat luapan sungai saat debit air dari hulu (Bogor/Depok) melebihi kapasitas palung sungai. 
+                        <br><em>Titik Rawan:</em> Bantaran Sungai Ciliwung (Bidara Cina, Kampung Melayu, Bukit Duri, Rawajati), Kali Pesanggrahan, dan Kali Sunter.</li>
+                        <li><strong>Tipologi Banjir Lokal (Pluvial Flood):</strong> Terjadi murni karena intensitas hujan lokal yang tinggi melebihi kapasitas sistem drainase makro dan mikro, ditambah buruknya resapan.
+                        <br><em>Titik Rawan:</em> Kawasan Kemang (Jakarta Selatan), Kelapa Gading (Jakarta Utara), dan perempatan Green Garden (Jakarta Barat).</li>
+                        <li><strong>Tipologi Banjir Rob (Coastal Flood):</strong> Dipicu oleh pasang maksimum air laut yang menggenangi daratan yang mengalami penurunan elevasi.
+                        <br><em>Titik Rawan:</em> Muara Baru, Pluit, Penjaringan, dan Cilincing (Jakarta Utara).</li>
+                    </ul>
+                </div>
+
+                <div class="my-card">
+                    <h3>BAB V: Kesimpulan dan Saran</h3>
+                    <p><strong>Kesimpulan:</strong> Banjir di Jakarta merupakan akumulasi dari gangguan pada siklus hidrosfer akibat modifikasi lingkungan yang tidak terkendali. Limpasan permukaan yang tidak sebanding dengan infiltrasi dan kapasitas tampung saluran air menjadi akar permasalahan, diperparah oleh penurunan muka tanah.</p>
+                    <p><strong>Saran (Langkah Mitigasi):</strong></p>
+                    <ul>
+                        <li><strong>Struktural:</strong> Percepatan normalisasi dan naturalisasi sungai, pembangunan sumur resapan (drainase vertikal) masif di kawasan padat, pemeliharaan pompa air dan polder di pesisir utara (Giant Sea Wall).</li>
+                        <li><strong>Non-Struktural (Ekologis & Hidrologis):</strong> Pembuatan biopori skala rumah tangga, penambahan Ruang Terbuka Hijau (RTH) penyerap air, manajemen persampahan, dan penghentian ekstraksi air tanah berlebih oleh industri.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- End of content marker padding -->
+            <div class="h-8"></div>
+        </div>
+
+        <!-- TAB 2: SUMBER / REFERENSI -->
+        <div id="tab-sumber" class="tab-content">
+            <div class="my-card">
+                <div class="flex items-center mb-6">
+                    <span class="material-symbols-rounded text-3xl text-[var(--md-sys-color-primary)] mr-3">menu_book</span>
+                    <h2 class="text-2xl font-bold">Daftar Pustaka & Sumber Data</h2>
+                </div>
+                
+                <ul class="space-y-4 content-text">
+                    <li class="bg-[#F8FAF0] p-4 rounded-2xl border border-[#E1E4D6]">
+                        <strong>Abidin, H. Z., et al. (2011).</strong> 
+                        <p class="text-sm mt-1 text-[#44483E]"><em>Land subsidence of Jakarta (Indonesia) and its relation with urban development.</em> Natural Hazards, 59(3), 1753-1771. (Digunakan untuk data penurunan muka tanah).</p>
+                    </li>
+                    <li class="bg-[#F8FAF0] p-4 rounded-2xl border border-[#E1E4D6]">
+                        <strong>Asdak, C. (2010).</strong> 
+                        <p class="text-sm mt-1 text-[#44483E]"><em>Hidrologi dan Pengelolaan Daerah Aliran Sungai.</em> Gadjah Mada University Press. (Digunakan untuk konsep dasar neraca air).</p>
+                    </li>
+                    <li class="bg-[#F8FAF0] p-4 rounded-2xl border border-[#E1E4D6]">
+                        <strong>Badan Meteorologi, Klimatologi, dan Geofisika (BMKG). (2024).</strong> 
+                        <p class="text-sm mt-1 text-[#44483E]"><em>Laporan Analisis Curah Hujan Ekstrem Wilayah Jabodetabek.</em> Jakarta: BMKG.</p>
+                    </li>
+                    <li class="bg-[#F8FAF0] p-4 rounded-2xl border border-[#E1E4D6]">
+                        <strong>Badan Nasional Penanggulangan Bencana (BNPB). (2024).</strong> 
+                        <p class="text-sm mt-1 text-[#44483E]"><em>Indeks Risiko Bencana Indonesia (IRBI) - Kajian Banjir DKI Jakarta.</em> Jakarta: BNPB.</p>
+                    </li>
+                    <li class="bg-[#F8FAF0] p-4 rounded-2xl border border-[#E1E4D6]">
+                        <strong>Sosrodarsono, S., & Takeda, K. (2006).</strong> 
+                        <p class="text-sm mt-1 text-[#44483E]"><em>Hidrologi untuk Pengairan.</em> PT Pradnya Paramita, Jakarta. (Digunakan untuk metodologi curah hujan wilayah).</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (Material You 3 style) -->
+    <nav class="fixed bottom-0 w-full bg-[var(--md-sys-color-surface)] flex justify-evenly items-center shadow-[0_-1px_3px_rgba(0,0,0,0.05)] pb-safe pt-2 pb-4 z-50 h-[var(--bottom-nav-height)]">
+        
+        <button onclick="switchTab('materi')" id="btn-materi" class="nav-item active flex flex-col items-center justify-center w-24 gap-1 outline-none">
+            <div class="nav-icon px-5 py-1 rounded-full flex items-center justify-center h-8">
+                <span class="material-symbols-rounded">article</span>
+            </div>
+            <span class="nav-text text-xs font-semibold tracking-wide">Materi</span>
+        </button>
+
+        <button onclick="switchTab('sumber')" id="btn-sumber" class="nav-item flex flex-col items-center justify-center w-24 gap-1 outline-none">
+            <div class="nav-icon px-5 py-1 rounded-full flex items-center justify-center h-8">
+                <span class="material-symbols-rounded">menu_book</span>
+            </div>
+            <span class="nav-text text-xs font-medium text-[#44483E] tracking-wide">Sumber</span>
+        </button>
+
+    </nav>
+
+    <!-- JavaScript for Logic -->
+    <script>
+        // 1. Tab Switching Logic
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.getElementById('tab-materi').classList.remove('active');
+            document.getElementById('tab-sumber').classList.remove('active');
+            
+            // Remove active state from all buttons
+            document.getElementById('btn-materi').classList.remove('active');
+            document.getElementById('btn-sumber').classList.remove('active');
+            
+            // Show selected tab & set button to active
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('btn-' + tabName).classList.add('active');
+
+            // Reset search text color formatting of inactive tabs
+            if (tabName === 'sumber') {
+                document.getElementById('searchBox').style.opacity = '0.3';
+                document.getElementById('searchBox').style.pointerEvents = 'none';
+                document.getElementById('searchInput').value = '';
+                clearSearch();
+            } else {
+                document.getElementById('searchBox').style.opacity = '1';
+                document.getElementById('searchBox').style.pointerEvents = 'auto';
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 2. Search & Highlight Logic
+        const contentContainer = document.getElementById('content-body');
+        const originalContentHTML = contentContainer.innerHTML; // Simpan versi murni HTML
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearSearch');
+        const resultCountLabel = document.getElementById('searchResultCount');
+
+        let searchTimeout = null;
+
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            const query = searchInput.value.trim();
+            
+            if (query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            // Debounce to prevent lag while typing
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        }
+
+        function clearSearchInput() {
+            searchInput.value = '';
+            handleSearch();
+            searchInput.focus();
+        }
+
+        function clearSearch() {
+            contentContainer.innerHTML = originalContentHTML; // Kembalikan ke asal
+            resultCountLabel.classList.add('hidden');
+            resultCountLabel.innerText = '';
+        }
+
+        function performSearch(query) {
+            // Reset to original before searching
+            contentContainer.innerHTML = originalContentHTML;
+            
+            if (!query || query.length < 2) {
+                resultCountLabel.classList.add('hidden');
+                return; 
+            }
+
+            // A robust way to highlight text without breaking HTML tags
+            // Walk through all text nodes inside contentContainer
+            let matchCount = 0;
+            const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+
+            function walkDOM(node) {
+                let children = Array.from(node.childNodes);
+                for (let child of children) {
+                    if (child.nodeType === 3) { // Text Node
+                        let text = child.nodeValue;
+                        if (regex.test(text)) {
+                            // Hitung jumlah match di text node ini
+                            let matches = text.match(regex);
+                            matchCount += matches.length;
+
+                            // Create wrapper for replacement
+                            let span = document.createElement('span');
+                            span.innerHTML = text.replace(regex, `<mark>$1</mark>`);
+                            node.replaceChild(span, child);
+                        }
+                    } else if (child.nodeType === 1 && child.nodeName !== 'MARK') { // Element Node
+                        walkDOM(child);
+                    }
+                }
+            }
+
+            walkDOM(contentContainer);
+
+            // Tampilkan jumlah hasil
+            if (matchCount > 0) {
+                resultCountLabel.innerText = `${matchCount} hasil ditemukan untuk "${query}"`;
+                resultCountLabel.classList.remove('hidden');
+                
+                // Auto scroll ke hasil pertama
+                const firstMark = contentContainer.querySelector('mark');
+                if (firstMark) {
+                    const topOffset = firstMark.getBoundingClientRect().top + window.scrollY - 150;
+                    window.scrollTo({ top: topOffset, behavior: 'smooth' });
+                }
+            } else {
+                resultCountLabel.innerText = `Tidak ada hasil untuk "${query}"`;
+                resultCountLabel.classList.remove('hidden');
+            }
+        }
+
+        // Helper function to escape special characters for regex
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+        
+    </script>
+</body>
+</html>
